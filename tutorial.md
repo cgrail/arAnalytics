@@ -21,9 +21,12 @@ Expected behavior:
 
 When you click on the fire button you should see a toast message: „Please implement me…“
 
-## Step 5: Open Game.Controller.js
+## Step 5: Open ARAnalytics.Controller.js
 
 Path:
 ```
 Webxr-ui5/webapp/controller/ARAnalytics.controller.js
 ```
+
+## Step 6: Create Sphere in space
+
