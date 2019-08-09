@@ -1,0 +1,35 @@
+.overlay {
+    position: fixed;
+    display: block;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.pointerauto {
+    pointer-events: auto;
+}
+
+.infobox {
+    width: 200px;
+}
+
+.slidein {
+    position: absolute;
+    left: -100px;
+    -webkit-animation: slidein 0.8s forwards;
+    -webkit-animation-delay: 0s;
+    animation: slidein 0.8s forwards;
+    animation-delay: 0s;
+    opacity: 0.8;
+}
+
+@-webkit-keyframes slidein {
+    100% { left: 0; }
+}
+
+@keyframes slidein {
+    100% { left: 0; }
+}
