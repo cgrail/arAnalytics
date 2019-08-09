@@ -12,10 +12,17 @@ sap.ui.define([
 				"scene": "any",
 				"camera": "any",
 				"selectedObject": "any",
-				"showInfoBox": { type: "boolean", defaultValue: false }
+				"showInfoBox": {
+					type: "boolean",
+					defaultValue: false
+				}
 			},
 			aggregations: {
-				_infoBox: { type: "sap.m.List", multiple: false, visiblity: "hidden" }
+				_infoBox: {
+					type: "sap.m.List",
+					multiple: false,
+					visiblity: "hidden"
+				}
 			},
 			events: {
 				"select": {} // triggered if an object is selected
@@ -83,7 +90,7 @@ sap.ui.define([
 				}
 				clicked = false;
 				// check if any object is selected
-				if (mouse.x != 0 && mouse.y != 0) {
+				if (mouse.x !== 0 && mouse.y !== 0) {
 					// update the picking ray with the camera and mouse position
 					raycaster.setFromCamera(mouse, camera);
 					// calculate objects intersecting the picking ray
@@ -92,7 +99,7 @@ sap.ui.define([
 					for (var i = 0; i < intersects.length; i++) {
 						if (intersects[i].object.type === "Mesh") {
 							// check if a new object is selected
-							if (!selectedObject || selectedObject.uuid != intersects[i].object.uuid) {
+							if (!selectedObject || selectedObject.uuid !== intersects[i].object.uuid) {
 								if (selectedObject) {
 									selectedObject.material.opacity = 1; // reset last selected object 
 								}
@@ -133,23 +140,24 @@ sap.ui.define([
 					font: font,
 					size: 0.07, // 5
 					height: 0.01, // 2
-					curveSegments: 3, // 6
+					curveSegments: 3 // 6
 				});
 				var color = new THREE.Color("grey");
 				var textMaterial = new THREE.MeshPhongMaterial({
 					color: color
 				});
-				var text = new THREE.Mesh(textGeometry, textMaterial);
-				text.position.set(x, y, z);
-				return text;
+				var textObj = new THREE.Mesh(textGeometry, textMaterial);
+				textObj.position.set(x, y, z);
+				return textObj;
 			}
 
 			function init(displays) {
-				container = document.createElement('div');
+				container = document.createElement("div");
 				document.body.appendChild(container);
 
 				scene = new THREE.Scene();
-				camera = displays ? new THREE.PerspectiveCamera() : new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+				camera = displays ? new THREE.PerspectiveCamera() : new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1,
+					1000);
 				var axesHelper = new THREE.AxesHelper(2);
 				scene.add(axesHelper);
 				scene.add(camera);
@@ -199,6 +207,7 @@ sap.ui.define([
 					// create OrbitControls
 					const controls = new THREE.OrbitControls(camera, renderer.domElement);
 					controls.update();
+
 					function animate() {
 						requestAnimationFrame(animate);
 						update();

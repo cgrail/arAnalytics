@@ -9,7 +9,7 @@ sap.ui.define([
             properties: {
                 sliderValue: {
                     type: "int",
-                    defaultValue: 0,
+                    defaultValue: 0
                 },
                 toolTips: {
                     type: "string[]"
@@ -37,7 +37,7 @@ sap.ui.define([
 
         sliderValueChanged(iValue) {
             return this.setSliderValue(iValue);
-        },
+        }
 
     });
 });

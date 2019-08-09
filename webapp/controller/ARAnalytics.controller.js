@@ -1,4 +1,4 @@
-/*global THREE TWEEN*/
+/*global THREE*/
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
@@ -24,11 +24,10 @@ sap.ui.define([
 				viewModel.setProperty("/tooltips", metaData.timeSeries);
 				this.getView().setModel(viewModel);
 				const sizeAndDimensions = spheresData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
-				console.log(sizeAndDimensions);
 				this.createdSpheres = sizeAndDimensions.map(this.createSphere.bind(this));
 
-				this.arView.attachSelect(function(oEvent) {
-					this.onSphereSelected(oEvent, metaData)
+				this.arView.attachSelect(function (oEvent) {
+					this.onSphereSelected(oEvent, metaData);
 				}.bind(this));
 			}.bind(this));
 
@@ -36,7 +35,7 @@ sap.ui.define([
 
 		mapDataToSizeAndDimension(sphereData, metaData) {
 			const dimensionConfig = metaData.dimensionConfig;
-			let sphereDataWithSizeAndDimension = { ...sphereData };
+			let sphereDataWithSizeAndDimension = Object.assign({}, sphereData);
 			sphereDataWithSizeAndDimension.sizeAndDimension = metaData.timeSeries.map((month) => {
 				function getDimensionValue(dimension) {
 					const value = sphereData[dimension][month];
@@ -49,7 +48,7 @@ sap.ui.define([
 					x: getDimensionValue(dimensionConfig.x),
 					y: getDimensionValue(dimensionConfig.y),
 					z: getDimensionValue(dimensionConfig.z)
-				}
+				};
 			});
 			return sphereDataWithSizeAndDimension;
 		},
@@ -86,10 +85,10 @@ sap.ui.define([
 		},
 
 		onSphereSelected(oEvent, metaData) {
-			var position = oEvent.getParameter('position');
+			var position = oEvent.getParameter("position");
 			if (!position) { // de-select object
 				return;
-			} 
+			}
 			var matches = this.createdSpheres.filter((sphere) => {
 				return (JSON.stringify(sphere.position) === JSON.stringify(position));
 			});
@@ -97,11 +96,11 @@ sap.ui.define([
 				var carData = matches[0].userData;
 				var carName = carData.name;
 				var currentTimeSerie = metaData.timeSeries[this.currentTimeSerieIndex];
-				var getDataFor = function(config) {
+				var getDataFor = function (config) {
 					return {
-						title: config, 
+						title: config,
 						counter: parseInt(carData[config][currentTimeSerie])
-					}
+					};
 				};
 				oEvent.getSource().setSelectedObject({
 					name: carName,
