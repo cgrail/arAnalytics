@@ -1,6 +1,12 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:control="webxr-ui5.control"
+<mvc:View xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m" 
+	xmlns:control="webxr-ui5.control" 
 	controllerName="webxr-ui5.controller.ARAnalytics">
-	<Page title="Augmented Reality Analytics with SAP UI5 and WebXR" backgroundDesign="Transparent" class="sapUiContentPadding overlay">
+	<Page title="Augmented Reality Analytics with SAP UI5 and WebXR" 
+		backgroundDesign="Transparent" 
+		class="sapUiContentPadding overlay">
 		<content>
 			<control:ArView id="arView"/>
 		</content>
@@ -8,7 +14,12 @@
 			<OverflowToolbar class="pointerauto">
 				<ToolbarSpacer/>
 				<Text text="Time"/>
-				<Slider id="timeSlider" showAdvancedTooltip="true" width="30%" max="2" value="0" liveChange="xChanged">
+				<Slider id="timeSlider" 
+					showAdvancedTooltip="true" 
+					width="80%" 
+					max="2" 
+					value="0" 
+					liveChange="xChanged">
 					<customTooltips>
 						<control:SliderTooltip toolTips="{/tooltips}"/>
 					</customTooltips>
