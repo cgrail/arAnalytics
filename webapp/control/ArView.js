@@ -12,6 +12,7 @@ sap.ui.define([
 				"scene": "any",
 				"camera": "any",
 				"selectedObject": "any",
+				"updateCallback": "any",
 				"showInfoBox": {
 					type: "boolean",
 					defaultValue: false
@@ -128,27 +129,12 @@ sap.ui.define([
 
 			var lookAtCameraObjects = [];
 
-			function update() {
+			const update = () => {
 				raycasting();
-				for (const o of lookAtCameraObjects) {
-					o.lookAt(camera.position);
+				const updateCallback = this.getUpdateCallback();
+				if (updateCallback) {
+					updateCallback();
 				}
-			}
-
-			function getTextSprite(text, font, x, y, z) {
-				var textGeometry = new THREE.TextGeometry(text, {
-					font: font,
-					size: 0.07, // 5
-					height: 0.01, // 2
-					curveSegments: 3 // 6
-				});
-				var color = new THREE.Color("grey");
-				var textMaterial = new THREE.MeshPhongMaterial({
-					color: color
-				});
-				var textObj = new THREE.Mesh(textGeometry, textMaterial);
-				textObj.position.set(x, y, z);
-				return textObj;
 			}
 
 			function init(displays) {
@@ -178,28 +164,6 @@ sap.ui.define([
 
 				// set cemera position
 				camera.position.set(-3, 1, 1);
-				// camera.position.set(2, 2, 2);
-
-				// add coordination labels
-				var loader = new THREE.FontLoader();
-
-				loader.load("fonts/72_Regular.typeface.json", function (font) {
-					var textSpriteX = getTextSprite("discount", font, 0.9, 0.05, 0);
-					lookAtCameraObjects.push(textSpriteX);
-					//textSpriteX.rotation.x = - Math.PI / 4;
-					scene.add(textSpriteX);
-
-					var textSpriteY = getTextSprite("customer satisfaction", font, 0, 0.6, 0.05);
-					textSpriteY.rotation.y = Math.PI / 4;
-					textSpriteY.rotation.z = Math.PI / 2;
-					lookAtCameraObjects.push(textSpriteY);
-					scene.add(textSpriteY);
-
-					var textSpriteZ = getTextSprite("CO2 emission", font, -0.05, 0.05, 1.2);
-					lookAtCameraObjects.push(textSpriteZ);
-					textSpriteZ.rotation.y = Math.PI / 2;
-					scene.add(textSpriteZ);
-				});
 
 				if (displays) {
 					renderer.xr = new THREE.WebXRManager({}, displays, renderer, camera, scene, update);

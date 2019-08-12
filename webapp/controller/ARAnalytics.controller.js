@@ -8,11 +8,13 @@ sap.ui.define([
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
 
 		createdSpheres: [],
+		lookAtCameraObjects: [],
 		currentColor: 0,
 		currentTimeSerieIndex: 0,
 
 		onInit() {
 			this.arView = this.byId("arView");
+			this.arView.setUpdateCallback((() => this.updateCallback()));
 
 			// load spheres data from JSON model
 			var carModel = new JSONModel();
@@ -20,6 +22,7 @@ sap.ui.define([
 			carModel.attachRequestCompleted(function () {
 				const spheresData = carModel.getData();
 				const metaData = spheresData.metaData;
+				this.createAxis(metaData);
 				var viewModel = new JSONModel();
 				viewModel.setProperty("/tooltips", metaData.timeSeries);
 				this.getView().setModel(viewModel);
@@ -31,6 +34,13 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 
+		},
+
+		updateCallback() {
+			const camera = this.arView.getCamera();
+			for (const o of this.lookAtCameraObjects) {
+				o.lookAt(camera.position);
+			}
 		},
 
 		mapDataToSizeAndDimension(sphereData, metaData) {
@@ -67,6 +77,46 @@ sap.ui.define([
 			sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
 			scene.add(sphere);
 			return sphere;
+		},
+
+		createAxis(metaData) {
+			const scene = this.arView.getScene();
+			// add coordination labels
+			var loader = new THREE.FontLoader();
+			loader.load("fonts/72_Regular.typeface.json", (font) => {
+				var textSpriteX = this.getTextSprite("discount", font, 0.9, 0.05, 0);
+				this.lookAtCameraObjects.push(textSpriteX);
+				scene.add(textSpriteX);
+
+				var textSpriteY = this.getTextSprite("customer satisfaction", font, 0, 0.6, 0.05);
+				textSpriteY.rotation.y = Math.PI / 2;
+				textSpriteY.rotation.z = Math.PI / 2;
+				this.lookAtCameraObjects.push(textSpriteY);
+				scene.add(textSpriteY);
+
+				var textSpriteZ = this.getTextSprite("CO2 emission", font, -0.05, 0.05, 1.2);
+				this.lookAtCameraObjects.push(textSpriteZ);
+				textSpriteZ.rotation.y = Math.PI / 2;
+				scene.add(textSpriteZ);
+			});
+		},
+
+
+
+		getTextSprite(text, font, x, y, z) {
+			var textGeometry = new THREE.TextGeometry(text, {
+				font: font,
+				size: 0.07, // 5
+				height: 0.01, // 2
+				curveSegments: 3 // 6
+			});
+			var color = new THREE.Color("grey");
+			var textMaterial = new THREE.MeshPhongMaterial({
+				color: color
+			});
+			var textObj = new THREE.Mesh(textGeometry, textMaterial);
+			textObj.position.set(x, y, z);
+			return textObj;
 		},
 
 		xChanged(control) {
