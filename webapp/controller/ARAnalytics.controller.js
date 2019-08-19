@@ -46,9 +46,9 @@ sap.ui.define([
 		},
 
 		showDetails(nodeData) {
-			const metaData = this.viewModel.getProperty("/metaData");
-			const currentKey = metaData.timeSeries[this.viewModel.getProperty("/sliderIndex")];
-			const nodeDetails = Object.values(metaData.dimensionConfig).map(dimension => {
+			const currentKey = this.viewModel.getProperty("/metaData/timeSeries/" + this.viewModel.getProperty("/sliderIndex"));
+			const dimensions = Object.values(this.viewModel.getProperty("/metaData/dimensionConfig"));
+			const nodeDetails = dimensions.map(dimension => {
 				return {
 					name: dimension.label,
 					value: nodeData[dimension.key][currentKey],
@@ -78,7 +78,7 @@ sap.ui.define([
 
 		mapDataToSizeAndDimension(sphereData, metaData) {
 			const dimensionConfig = metaData.dimensionConfig;
-			let sphereDataWithSizeAndDimension = Object.assign({}, sphereData);
+			const sphereDataWithSizeAndDimension = Object.assign({}, sphereData);
 			sphereDataWithSizeAndDimension.sizeAndDimension = metaData.timeSeries.map((month) => {
 				function getDimensionValue(dimension) {
 					const value = sphereData[dimension.key][month];
@@ -100,9 +100,8 @@ sap.ui.define([
 			const sphereData = completeSphereData.sizeAndDimension[0];
 			const scene = this.arView.getScene();
 			const geometry = new THREE.SphereGeometry(sphereData.size, 32, 32);
-			var color = FioriColors.getNextColor();
 			const material = new THREE.MeshPhongMaterial({
-				color: color,
+				color: FioriColors.getNextColor(),
 				shininess: 0.7
 			});
 			const sphere = new THREE.Mesh(geometry, material);
@@ -113,7 +112,7 @@ sap.ui.define([
 		},
 
 		createAxisLabels() {
-			var loader = new THREE.FontLoader();
+			const loader = new THREE.FontLoader();
 			loader.load("fonts/72_Regular.typeface.json", (font) => {
 				this.createAxisLabel("x", font, 0.9, 0.05, 0);
 				this.createAxisLabel("y", font, 0, 0.6, 0.05);
@@ -124,16 +123,16 @@ sap.ui.define([
 		createAxisLabel(dimension, font, x, y, z) {
 			const text = this.viewModel.getProperty(`/metaData/dimensionConfig/${dimension}/label`);
 			const scene = this.arView.getScene();
-			var textGeometry = new THREE.TextGeometry(text, {
+			const textGeometry = new THREE.TextGeometry(text, {
 				font: font,
 				size: 0.07,
 				height: 0.01,
 				curveSegments: 3
 			});
-			var textMaterial = new THREE.MeshPhongMaterial({
+			const textMaterial = new THREE.MeshPhongMaterial({
 				color: new THREE.Color("grey")
 			});
-			var textObj = new THREE.Mesh(textGeometry, textMaterial);
+			const textObj = new THREE.Mesh(textGeometry, textMaterial);
 			textObj.position.set(x, y, z);
 			this.lookAtCameraObjects.push(textObj);
 			scene.add(textObj);

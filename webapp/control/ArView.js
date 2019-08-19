@@ -15,6 +15,8 @@ sap.ui.define([
 			}
 		},
 
+		arViewInitialized: false,
+
 		onAfterRendering: function () {
 
 			if (this.arViewInitialized) {
@@ -22,19 +24,15 @@ sap.ui.define([
 			}
 			this.arViewInitialized = true;
 
-			var that = this;
-			var container;
-			var renderer, camera, scene;
+			var camera, scene;
 
 			const fireMousePress = (event) => {
-				var mousePos = new THREE.Vector2();
+				const mousePos = new THREE.Vector2();
 				mousePos.x = (event.clientX / window.innerWidth) * 2 - 1;
 				mousePos.y = -(event.clientY / window.innerHeight) * 2 + 1;
-				var raycaster = new THREE.Raycaster();
-				// update the picking ray with the camera and mouse position
+				const raycaster = new THREE.Raycaster();
 				raycaster.setFromCamera(mousePos, camera);
-				// calculate objects intersecting the picking ray
-				var intersects = raycaster.intersectObjects(scene.children);
+				const intersects = raycaster.intersectObjects(scene.children);
 				for (var i = 0; i < intersects.length; i++) {
 					if (intersects[i].object.type === "Mesh") {
 						this.firePress({
@@ -58,32 +56,27 @@ sap.ui.define([
 				}
 			};
 
-			function init(displays) {
-				container = document.createElement("div");
+			const init = (displays) => {
+				const container = document.createElement("div");
 				document.body.appendChild(container);
 
 				scene = new THREE.Scene();
 				camera = displays ? new THREE.PerspectiveCamera() : new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1,
 					1000);
-				var axesHelper = new THREE.AxesHelper(2);
+				const axesHelper = new THREE.AxesHelper(2);
 				scene.add(axesHelper);
 				scene.add(camera);
-				that.setCamera(camera);
-				that.setScene(scene);
-				renderer = new THREE.WebGLRenderer({
+				this.setCamera(camera);
+				this.setScene(scene);
+				const renderer = new THREE.WebGLRenderer({
 					alpha: true,
 					antialias: true
 				});
 				renderer.setSize(window.innerWidth - 5, window.innerHeight - 30);
 				container.appendChild(renderer.domElement);
 
-				var pointLight = new THREE.PointLight(0xFFFFFF, 0.8);
-				camera.add(pointLight);
-
-				var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.4);
-				scene.add(ambientLight);
-
-				// set cemera position
+				camera.add(new THREE.PointLight(0xFFFFFF, 0.8));
+				scene.add(new THREE.AmbientLight(0xFFFFFF, 0.4));
 				camera.position.set(-3, 1, 1);
 
 				if (displays) {
@@ -102,7 +95,7 @@ sap.ui.define([
 				}
 			}
 			if (THREE.WebXRUtils) {
-				THREE.WebXRUtils.getDisplays().then(init);
+				THREE.WebXRUtils.getDisplays().then(() => init());
 			} else {
 				init();
 			}
