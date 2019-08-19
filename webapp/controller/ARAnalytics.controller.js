@@ -65,8 +65,14 @@ sap.ui.define([
 
 		updateCallback() {
 			const camera = this.arView.getCamera();
+			var rotation;
 			for (const textObject of this.lookAtCameraObjects) {
-				textObject.lookAt(camera.position);
+				if (rotation) {
+					textObject.setRotationFromEuler(rotation);
+				} else {
+					textObject.lookAt(camera.position);
+					rotation = textObject.rotation;
+				}
 			}
 		},
 
