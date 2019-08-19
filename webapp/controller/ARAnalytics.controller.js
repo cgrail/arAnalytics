@@ -31,13 +31,13 @@ sap.ui.define([
 					this.viewModel.setProperty("/metaData", metaData);
 					this.viewModel.setProperty("/spheres", spheres);
 					this.createAxisLabels();
-				})
+				});
 		},
 
 		onPress(evt) {
 			const clickedUuid = evt.getParameter("uuid");
 			this.viewModel.getProperty("/spheres").forEach(sphere => {
-				const isSelectedNode = sphere.uuid == clickedUuid;
+				const isSelectedNode = sphere.uuid === clickedUuid;
 				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
 				if (isSelectedNode) {
 					this.showDetails(sphere.userData);
@@ -53,7 +53,7 @@ sap.ui.define([
 					name: dimension.label,
 					value: nodeData[dimension.key][currentKey],
 					unit: dimension.unit
-				}
+				};
 			});
 			this.viewModel.setProperty("/selectedCar", {
 				node: nodeData,
@@ -142,7 +142,7 @@ sap.ui.define([
 
 		onTimeSliderChange(evt) {
 			const sliderIndex = evt.getSource().getValue();
-			this.viewModel.setProperty("/sliderIndex", sliderIndex)
+			this.viewModel.setProperty("/sliderIndex", sliderIndex);
 			this.viewModel.getProperty("/spheres").forEach((sphere) => {
 				const sphereData = sphere.userData.sizeAndDimension[sliderIndex];
 				sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));

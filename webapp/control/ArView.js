@@ -1,10 +1,7 @@
 /*global THREE */
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/m/Label",
-	"sap/m/List",
-	"sap/m/StandardListItem"
-], function (Control, Label, List, StandardListItem) {
+	"sap/ui/core/Control"
+], function (Control) {
 	"use strict";
 	return Control.extend("webxr-ui5.control.ArView", {
 		metadata: {
@@ -59,7 +56,7 @@ sap.ui.define([
 				if (updateCallback) {
 					updateCallback();
 				}
-			}
+			};
 
 			function init(displays) {
 				container = document.createElement("div");
