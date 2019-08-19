@@ -15,7 +15,8 @@
 				visible="{/selectedCar/visible}" 
 				headerText="{/selectedCar/title}" 
 				items="{/selectedCar/items}" 
-				class="slidein">
+				class="slidein headerBackground" 
+				backgroundDesign="Solid">
 				<ObjectListItem title="{name}" 
 					number="{value}" 
 					numberUnit="{unit}"/>
