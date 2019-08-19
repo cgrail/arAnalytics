@@ -8,7 +8,18 @@
 		backgroundDesign="Transparent" 
 		class="sapUiContentPadding overlay">
 		<content>
-			<control:ArView id="arView"/>
+			<control:ArView id="arView" 
+				press="onPress" />
+
+			<List width="250px" 
+				visible="{/selectedCar/visible}" 
+				headerText="{/selectedCar/title}" 
+				items="{/selectedCar/items}" 
+				class="slidein">
+				<ObjectListItem title="{name}" 
+					number="{value}" 
+					numberUnit="{unit}"/>
+			</List>
 		</content>
 		<footer>
 			<OverflowToolbar class="pointerauto">
@@ -21,7 +32,7 @@
 					value="0" 
 					liveChange="xChanged">
 					<customTooltips>
-						<control:SliderTooltip toolTips="{/tooltips}"/>
+						<control:SliderTooltip toolTips="{/metaData/timeSeries}"/>
 					</customTooltips>
 				</Slider>
 				<ToolbarSpacer/>

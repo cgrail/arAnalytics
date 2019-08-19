@@ -16,30 +16,60 @@ sap.ui.define([
 			this.arView = this.byId("arView");
 			this.arView.setUpdateCallback((() => this.updateCallback()));
 
+			var viewModel = new JSONModel();
+			viewModel.setData({
+				selectedCar: {
+					visible: false
+				}
+			});
+			this.getView().setModel(viewModel);
 			// load spheres data from JSON model
 			var carModel = new JSONModel();
 			carModel.loadData("data/carData.json");
 			carModel.attachRequestCompleted(function () {
 				const spheresData = carModel.getData();
 				const metaData = spheresData.metaData;
+				this.getView().getModel().setProperty("/metaData", metaData);
 				this.createAxis(metaData);
-				var viewModel = new JSONModel();
-				viewModel.setProperty("/tooltips", metaData.timeSeries);
-				this.getView().setModel(viewModel);
 				const sizeAndDimensions = spheresData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
 				this.createdSpheres = sizeAndDimensions.map(this.createSphere.bind(this));
-
-				this.arView.attachSelect(function (oEvent) {
-					this.onSphereSelected(oEvent, metaData);
-				}.bind(this));
 			}.bind(this));
+		},
 
+		onPress(evt) {
+			const clickedUuid = evt.getParameter("uuid");
+			this.createdSpheres.forEach(sphere => {
+				const isSelectedNode = sphere.uuid == clickedUuid;
+				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
+				if (isSelectedNode) {
+					this.showDetails(sphere.userData);
+				}
+			});
+		},
+
+		showDetails(nodeData) {
+			const model = this.getView().getModel();
+			const metaData = model.getProperty("/metaData");
+			const currentKey = metaData.timeSeries[this.currentTimeSerieIndex];
+			const nodeDetails = Object.values(metaData.dimensionConfig).map(dimension => {
+				return {
+					name: dimension.label,
+					value: nodeData[dimension.key][currentKey],
+					unit: dimension.unit
+				}
+			});
+			model.setProperty("/selectedCar", {
+				node: nodeData,
+				visible: true,
+				title: nodeData.name,
+				items: nodeDetails
+			});
 		},
 
 		updateCallback() {
 			const camera = this.arView.getCamera();
-			for (const o of this.lookAtCameraObjects) {
-				o.lookAt(camera.position);
+			for (const textObject of this.lookAtCameraObjects) {
+				textObject.lookAt(camera.position);
 			}
 		},
 
@@ -48,8 +78,8 @@ sap.ui.define([
 			let sphereDataWithSizeAndDimension = Object.assign({}, sphereData);
 			sphereDataWithSizeAndDimension.sizeAndDimension = metaData.timeSeries.map((month) => {
 				function getDimensionValue(dimension) {
-					const value = sphereData[dimension][month];
-					const minMax = metaData.minMax[dimension];
+					const value = sphereData[dimension.key][month];
+					const minMax = metaData.minMax[dimension.key];
 					return (value - minMax.min) / (minMax.max - minMax.min);
 				}
 				return {
@@ -101,8 +131,6 @@ sap.ui.define([
 			});
 		},
 
-
-
 		getTextSprite(text, font, x, y, z) {
 			var textGeometry = new THREE.TextGeometry(text, {
 				font: font,
@@ -125,6 +153,10 @@ sap.ui.define([
 				const sphereData = sphere.userData.sizeAndDimension[this.currentTimeSerieIndex];
 				sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
 			});
+			const selectedNode = this.getView().getModel().getProperty("/selectedCar/node");
+			if (selectedNode) {
+				this.showDetails(selectedNode);
+			}
 		},
 
 		getFioriColor() {
@@ -132,39 +164,6 @@ sap.ui.define([
 			const color = fioriColors[this.currentColor % fioriColors.length];
 			this.currentColor += 1;
 			return color;
-		},
-
-		onSphereSelected(oEvent, metaData) {
-			var position = oEvent.getParameter("position");
-			if (!position) { // de-select object
-				return;
-			}
-			var matches = this.createdSpheres.filter((sphere) => {
-				return (JSON.stringify(sphere.position) === JSON.stringify(position));
-			});
-			if (matches.length > 0) {
-				var carData = matches[0].userData;
-				var carName = carData.name;
-				var currentTimeSerie = metaData.timeSeries[this.currentTimeSerieIndex];
-				var getDataFor = function (config) {
-					return {
-						title: config,
-						counter: parseInt(carData[config][currentTimeSerie])
-					};
-				};
-				oEvent.getSource().setSelectedObject({
-					name: carName,
-					items: [
-						getDataFor(metaData.dimensionConfig.size),
-						getDataFor(metaData.dimensionConfig.x),
-						getDataFor(metaData.dimensionConfig.y),
-						getDataFor(metaData.dimensionConfig.z)
-					]
-				});
-				oEvent.getSource().setShowInfoBox(true);
-			} else {
-				oEvent.getSource().setShowInfoBox(false);
-			}
 		}
 	});
 });

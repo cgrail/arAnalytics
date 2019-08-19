@@ -9,55 +9,13 @@ sap.ui.define([
 	return Control.extend("webxr-ui5.control.ArView", {
 		metadata: {
 			properties: {
-				"scene": "any",
-				"camera": "any",
-				"selectedObject": "any",
-				"updateCallback": "any",
-				"showInfoBox": {
-					type: "boolean",
-					defaultValue: false
-				}
-			},
-			aggregations: {
-				_infoBox: {
-					type: "sap.m.List",
-					multiple: false,
-					visiblity: "hidden"
-				}
+				"scene": "object",
+				"camera": "object",
+				"updateCallback": "function"
 			},
 			events: {
-				"select": {} // triggered if an object is selected
+				"press": {}
 			}
-		},
-
-		init: function () {
-			this.setAggregation("_infoBox", new List({
-				headerText: ""
-			}));
-		},
-
-		setSelectedObject: function (object) {
-			if (object && object.name) {
-				this.getAggregation("_infoBox").setHeaderText(object.name);
-				this.getAggregation("_infoBox").removeAllItems();
-				if (object.items && object.items.length > 0) {
-					object.items.forEach(item => {
-						this.getAggregation("_infoBox").addItem(new StandardListItem(item));
-					});
-				}
-			}
-		},
-
-		getPositionWithOffset: function (offset) {
-			var dirMtx = new THREE.Matrix4();
-			dirMtx.makeRotationFromQuaternion(this.getCamera().quaternion);
-			var push = new THREE.Vector3(0, 0, -1.0);
-			push.transformDirection(dirMtx);
-			var wpVector = new THREE.Vector3();
-			this.getCamera().getWorldPosition(wpVector);
-			var pos = wpVector;
-			pos.addScaledVector(push, offset);
-			return pos;
 		},
 
 		onAfterRendering: function () {
@@ -70,67 +28,33 @@ sap.ui.define([
 			var that = this;
 			var container;
 			var renderer, camera, scene;
-			var raycaster = new THREE.Raycaster();
-			var mouse = new THREE.Vector2();
-			var clicked = false;
+
+			const fireMousePress = (event) => {
+				var mousePos = new THREE.Vector2();
+				mousePos.x = (event.clientX / window.innerWidth) * 2 - 1;
+				mousePos.y = -(event.clientY / window.innerHeight) * 2 + 1;
+				var raycaster = new THREE.Raycaster();
+				// update the picking ray with the camera and mouse position
+				raycaster.setFromCamera(mousePos, camera);
+				// calculate objects intersecting the picking ray
+				var intersects = raycaster.intersectObjects(scene.children);
+				for (var i = 0; i < intersects.length; i++) {
+					if (intersects[i].object.type === "Mesh") {
+						this.firePress({
+							uuid: intersects[i].object.uuid
+						});
+						break;
+					}
+				}
+			};
 			document.addEventListener("mousedown", (event) => {
-				mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-				mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-				clicked = true;
+				fireMousePress(event);
 			});
 			document.addEventListener("touchstart", (event) => {
-				mouse.x = (event.touches[0].clientX / window.innerWidth) * 2 - 1;
-				mouse.y = -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
-				clicked = true;
+				fireMousePress(event);
 			});
-			var selectedObject;
-
-			function raycasting() {
-				if (!clicked) {
-					return;
-				}
-				clicked = false;
-				// check if any object is selected
-				if (mouse.x !== 0 && mouse.y !== 0) {
-					// update the picking ray with the camera and mouse position
-					raycaster.setFromCamera(mouse, camera);
-					// calculate objects intersecting the picking ray
-					var intersects = raycaster.intersectObjects(scene.children);
-					var matched = false;
-					for (var i = 0; i < intersects.length; i++) {
-						if (intersects[i].object.type === "Mesh") {
-							// check if a new object is selected
-							if (!selectedObject || selectedObject.uuid !== intersects[i].object.uuid) {
-								if (selectedObject) {
-									selectedObject.material.opacity = 1; // reset last selected object 
-								}
-								selectedObject = intersects[i].object;
-								selectedObject.material.opacity = 0.7;
-								that.fireSelect({
-									position: selectedObject.position.clone()
-								});
-							}
-							matched = true;
-							break;
-						}
-					}
-					if (!matched) { // no match, need to deselect the previous sphere
-						if (selectedObject) {
-							selectedObject.material.opacity = 1;
-							selectedObject = null;
-						}
-						that.fireSelect({
-							position: null
-						});
-						that.setShowInfoBox(false);
-					}
-				}
-			}
-
-			var lookAtCameraObjects = [];
 
 			const update = () => {
-				raycasting();
 				const updateCallback = this.getUpdateCallback();
 				if (updateCallback) {
 					updateCallback();
@@ -187,20 +111,10 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function (oRm, oControl) { // the part creating the HTML
+		renderer: function (oRm, oControl) {
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
-			oRm.addClass("infobox");
-			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write("<div");
-			if (oControl.getShowInfoBox()) {
-				oRm.addClass("slidein");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.renderControl(oControl.getAggregation("_infoBox"));
-			}
-			oRm.write("</div>");
 			oRm.write("</div>");
 		}
 	});

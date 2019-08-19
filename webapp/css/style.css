@@ -12,24 +12,16 @@
     pointer-events: auto;
 }
 
-.infobox {
-    width: 200px;
-}
-
 .slidein {
     position: absolute;
-    left: -100px;
-    -webkit-animation: slidein 0.8s forwards;
-    -webkit-animation-delay: 0s;
-    animation: slidein 0.8s forwards;
-    animation-delay: 0s;
-    opacity: 0.8;
+    animation: expand 1s;
 }
 
-@-webkit-keyframes slidein {
-    100% { left: 0; }
-}
-
-@keyframes slidein {
-    100% { left: 0; }
+@keyframes expand {
+    from {
+        transform: scale(0.1);
+    }
+    to{
+        transform: scale(1);
+    }
 }
