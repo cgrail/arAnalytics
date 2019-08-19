@@ -17,7 +17,8 @@
             },
             "y": {
                 "label": "Customer Satisfaction",
-                "key": "customerSatisfaction"
+                "key": "customerSatisfaction",
+                "unit": "★"
             },
             "z": {
                 "label": "Combined MPG",

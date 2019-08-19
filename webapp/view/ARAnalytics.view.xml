@@ -25,12 +25,11 @@
 			<OverflowToolbar class="pointerauto">
 				<ToolbarSpacer/>
 				<Text text="Time"/>
-				<Slider id="timeSlider" 
-					showAdvancedTooltip="true" 
+				<Slider showAdvancedTooltip="true" 
 					width="80%" 
 					max="2" 
 					value="0" 
-					liveChange="xChanged">
+					liveChange="onTimeSliderChange">
 					<customTooltips>
 						<control:SliderTooltip toolTips="{/metaData/timeSeries}"/>
 					</customTooltips>

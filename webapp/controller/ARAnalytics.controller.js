@@ -6,39 +6,38 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
-
-		createdSpheres: [],
 		lookAtCameraObjects: [],
 		currentColor: 0,
-		currentTimeSerieIndex: 0,
+
+		viewModel: new JSONModel(),
 
 		onInit() {
 			this.arView = this.byId("arView");
 			this.arView.setUpdateCallback((() => this.updateCallback()));
 
-			var viewModel = new JSONModel();
-			viewModel.setData({
+			this.viewModel.setData({
+				sliderIndex: 0,
 				selectedCar: {
 					visible: false
 				}
 			});
-			this.getView().setModel(viewModel);
-			// load spheres data from JSON model
-			var carModel = new JSONModel();
-			carModel.loadData("data/carData.json");
-			carModel.attachRequestCompleted(function () {
-				const spheresData = carModel.getData();
-				const metaData = spheresData.metaData;
-				this.getView().getModel().setProperty("/metaData", metaData);
-				this.createAxis(metaData);
-				const sizeAndDimensions = spheresData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
-				this.createdSpheres = sizeAndDimensions.map(this.createSphere.bind(this));
-			}.bind(this));
+			this.getView().setModel(this.viewModel);
+
+			fetch("data/carData.json")
+				.then(result => result.json())
+				.then(carData => {
+					const metaData = carData.metaData;
+					this.createAxis(metaData);
+					const sizeAndDimensions = carData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
+					const spheres = sizeAndDimensions.map(this.createSphere.bind(this));
+					this.viewModel.setProperty("/metaData", metaData);
+					this.viewModel.setProperty("/spheres", spheres);
+				})
 		},
 
 		onPress(evt) {
 			const clickedUuid = evt.getParameter("uuid");
-			this.createdSpheres.forEach(sphere => {
+			this.viewModel.getProperty("/spheres").forEach(sphere => {
 				const isSelectedNode = sphere.uuid == clickedUuid;
 				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
 				if (isSelectedNode) {
@@ -48,9 +47,8 @@ sap.ui.define([
 		},
 
 		showDetails(nodeData) {
-			const model = this.getView().getModel();
-			const metaData = model.getProperty("/metaData");
-			const currentKey = metaData.timeSeries[this.currentTimeSerieIndex];
+			const metaData = this.viewModel.getProperty("/metaData");
+			const currentKey = metaData.timeSeries[this.viewModel.getProperty("/sliderIndex")];
 			const nodeDetails = Object.values(metaData.dimensionConfig).map(dimension => {
 				return {
 					name: dimension.label,
@@ -58,7 +56,7 @@ sap.ui.define([
 					unit: dimension.unit
 				}
 			});
-			model.setProperty("/selectedCar", {
+			this.viewModel.setProperty("/selectedCar", {
 				node: nodeData,
 				visible: true,
 				title: nodeData.name,
@@ -114,24 +112,24 @@ sap.ui.define([
 			// add coordination labels
 			var loader = new THREE.FontLoader();
 			loader.load("fonts/72_Regular.typeface.json", (font) => {
-				var textSpriteX = this.getTextSprite("discount", font, 0.9, 0.05, 0);
+				var textSpriteX = this.createText("discount", font, 0.9, 0.05, 0);
 				this.lookAtCameraObjects.push(textSpriteX);
 				scene.add(textSpriteX);
 
-				var textSpriteY = this.getTextSprite("customer satisfaction", font, 0, 0.6, 0.05);
+				var textSpriteY = this.createText("customer satisfaction", font, 0, 0.6, 0.05);
 				textSpriteY.rotation.y = Math.PI / 2;
 				textSpriteY.rotation.z = Math.PI / 2;
 				this.lookAtCameraObjects.push(textSpriteY);
 				scene.add(textSpriteY);
 
-				var textSpriteZ = this.getTextSprite("CO2 emission", font, -0.05, 0.05, 1.2);
+				var textSpriteZ = this.createText("CO2 emission", font, -0.05, 0.05, 1.2);
 				this.lookAtCameraObjects.push(textSpriteZ);
 				textSpriteZ.rotation.y = Math.PI / 2;
 				scene.add(textSpriteZ);
 			});
 		},
 
-		getTextSprite(text, font, x, y, z) {
+		createText(text, font, x, y, z) {
 			var textGeometry = new THREE.TextGeometry(text, {
 				font: font,
 				size: 0.07, // 5
@@ -147,13 +145,14 @@ sap.ui.define([
 			return textObj;
 		},
 
-		xChanged(control) {
-			this.currentTimeSerieIndex = control.getSource().getValue();
-			this.createdSpheres.forEach((sphere) => {
-				const sphereData = sphere.userData.sizeAndDimension[this.currentTimeSerieIndex];
+		onTimeSliderChange(evt) {
+			const sliderIndex = evt.getSource().getValue();
+			this.viewModel.setProperty("/sliderIndex", sliderIndex)
+			this.viewModel.getProperty("/spheres").forEach((sphere) => {
+				const sphereData = sphere.userData.sizeAndDimension[sliderIndex];
 				sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
 			});
-			const selectedNode = this.getView().getModel().getProperty("/selectedCar/node");
+			const selectedNode = this.viewModel.getProperty("/selectedCar/node");
 			if (selectedNode) {
 				this.showDetails(selectedNode);
 			}
