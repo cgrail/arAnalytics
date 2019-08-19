@@ -27,11 +27,11 @@ sap.ui.define([
 				.then(result => result.json())
 				.then(carData => {
 					const metaData = carData.metaData;
-					this.createAxis(metaData);
 					const sizeAndDimensions = carData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
 					const spheres = sizeAndDimensions.map(this.createSphere.bind(this));
 					this.viewModel.setProperty("/metaData", metaData);
 					this.viewModel.setProperty("/spheres", spheres);
+					this.createAxisLabels();
 				})
 		},
 
@@ -107,26 +107,18 @@ sap.ui.define([
 			return sphere;
 		},
 
-		createAxis(metaData) {
-			const scene = this.arView.getScene();
-			// add coordination labels
+		createAxisLabels() {
 			var loader = new THREE.FontLoader();
 			loader.load("fonts/72_Regular.typeface.json", (font) => {
-				var textSpriteX = this.createText("discount", font, 0.9, 0.05, 0);
-				this.lookAtCameraObjects.push(textSpriteX);
-				scene.add(textSpriteX);
-
-				var textSpriteY = this.createText("customer satisfaction", font, 0, 0.6, 0.05);
-				this.lookAtCameraObjects.push(textSpriteY);
-				scene.add(textSpriteY);
-
-				var textSpriteZ = this.createText("CO2 emission", font, -0.05, 0.05, 1.2);
-				this.lookAtCameraObjects.push(textSpriteZ);
-				scene.add(textSpriteZ);
+				this.createAxisLabel("x", font, 0.9, 0.05, 0);
+				this.createAxisLabel("y", font, 0, 0.6, 0.05);
+				this.createAxisLabel("z", font, -0.05, 0.05, 1.2);
 			});
 		},
 
-		createText(text, font, x, y, z) {
+		createAxisLabel(dimension, font, x, y, z) {
+			const text = this.viewModel.getProperty(`/metaData/dimensionConfig/${dimension}/label`);
+			const scene = this.arView.getScene();
 			var textGeometry = new THREE.TextGeometry(text, {
 				font: font,
 				size: 0.07,
@@ -138,6 +130,8 @@ sap.ui.define([
 			});
 			var textObj = new THREE.Mesh(textGeometry, textMaterial);
 			textObj.position.set(x, y, z);
+			this.lookAtCameraObjects.push(textObj);
+			scene.add(textObj);
 			return textObj;
 		},
 
