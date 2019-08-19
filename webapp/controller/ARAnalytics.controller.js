@@ -1,13 +1,13 @@
 /*global THREE*/
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function (Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"webxr-ui5/utils/FioriColors"
+], function (Controller, JSONModel, FioriColors) {
 	"use strict";
 
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
 		lookAtCameraObjects: [],
-		currentColor: 0,
 
 		viewModel: new JSONModel(),
 
@@ -95,7 +95,7 @@ sap.ui.define([
 			const sphereData = completeSphereData.sizeAndDimension[0];
 			const scene = this.arView.getScene();
 			const geometry = new THREE.SphereGeometry(sphereData.size, 32, 32);
-			var color = this.getFioriColor();
+			var color = FioriColors.getNextColor();
 			const material = new THREE.MeshPhongMaterial({
 				color: color,
 				shininess: 0.7
@@ -117,14 +117,11 @@ sap.ui.define([
 				scene.add(textSpriteX);
 
 				var textSpriteY = this.createText("customer satisfaction", font, 0, 0.6, 0.05);
-				textSpriteY.rotation.y = Math.PI / 2;
-				textSpriteY.rotation.z = Math.PI / 2;
 				this.lookAtCameraObjects.push(textSpriteY);
 				scene.add(textSpriteY);
 
 				var textSpriteZ = this.createText("CO2 emission", font, -0.05, 0.05, 1.2);
 				this.lookAtCameraObjects.push(textSpriteZ);
-				textSpriteZ.rotation.y = Math.PI / 2;
 				scene.add(textSpriteZ);
 			});
 		},
@@ -132,13 +129,12 @@ sap.ui.define([
 		createText(text, font, x, y, z) {
 			var textGeometry = new THREE.TextGeometry(text, {
 				font: font,
-				size: 0.07, // 5
-				height: 0.01, // 2
-				curveSegments: 3 // 6
+				size: 0.07,
+				height: 0.01,
+				curveSegments: 3
 			});
-			var color = new THREE.Color("grey");
 			var textMaterial = new THREE.MeshPhongMaterial({
-				color: color
+				color: new THREE.Color("grey")
 			});
 			var textObj = new THREE.Mesh(textGeometry, textMaterial);
 			textObj.position.set(x, y, z);
@@ -156,13 +152,8 @@ sap.ui.define([
 			if (selectedNode) {
 				this.showDetails(selectedNode);
 			}
-		},
-
-		getFioriColor() {
-			const fioriColors = ["#91c8f6", "#FF8888", "#FABD64", "#ABE2AB", "#D3D7D9"];
-			const color = fioriColors[this.currentColor % fioriColors.length];
-			this.currentColor += 1;
-			return color;
 		}
+
+
 	});
 });
