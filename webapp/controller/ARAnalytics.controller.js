@@ -7,21 +7,20 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
-		lookAtCameraObjects: [],
 
-		viewModel: new JSONModel(),
+		lookAtCameraObjects: [],
+		viewModel: new JSONModel({
+			sliderIndex: 0,
+			selectedCar: {
+				visible: false
+			}
+		}),
 
 		onInit() {
+			this.getView().setModel(this.viewModel);
+
 			this.arView = this.byId("arView");
 			this.arView.setUpdateCallback((() => this.updateCallback()));
-
-			this.viewModel.setData({
-				sliderIndex: 0,
-				selectedCar: {
-					visible: false
-				}
-			});
-			this.getView().setModel(this.viewModel);
 
 			fetch("data/carData.json")
 				.then(result => result.json())
@@ -147,7 +146,6 @@ sap.ui.define([
 				this.showDetails(selectedNode);
 			}
 		}
-
 
 	});
 });
