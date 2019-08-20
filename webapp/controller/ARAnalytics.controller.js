@@ -8,7 +8,12 @@ sap.ui.define([
 
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
 
-		viewModel: new JSONModel(),
+		viewModel: new JSONModel({
+			sliderIndex: 0,
+			selectedCar: {
+				visible: false
+			}
+		}),
 
 		onAfterRendering() {
 
@@ -106,6 +111,10 @@ sap.ui.define([
 				const sphereData = sphere.userData.sizeAndDimension[sliderIndex];
 				sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
 			});
+			const selectedNode = this.viewModel.getProperty("/selectedCar/node");
+			if (selectedNode) {
+				this.showDetails(selectedNode);
+			}
 		},
 
 		onPress(evt) {
@@ -113,6 +122,9 @@ sap.ui.define([
 			this.viewModel.getProperty("/spheres").forEach(sphere => {
 				const isSelectedNode = sphere === intersectedSphere;
 				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
+				if (isSelectedNode) {
+					this.showDetails(sphere.userData);
+				}
 			});
 		},
 
@@ -123,6 +135,24 @@ sap.ui.define([
 			if (intersects.length > 0) {
 				return intersects[0].object;
 			}
+		},
+
+		showDetails(nodeData) {
+			const currentKey = this.viewModel.getProperty("/metaData/timeSeries/" + this.viewModel.getProperty("/sliderIndex"));
+			const dimensions = Object.values(this.viewModel.getProperty("/metaData/dimensionConfig"));
+			const nodeDetails = dimensions.map(dimension => {
+				return {
+					name: dimension.label,
+					value: nodeData[dimension.key][currentKey],
+					unit: dimension.unit
+				};
+			});
+			this.viewModel.setProperty("/selectedCar", {
+				node: nodeData,
+				visible: true,
+				title: nodeData.name,
+				items: nodeDetails
+			});
 		}
 
 	});

@@ -9,7 +9,18 @@
 		class="sapUiContentPadding overlay">
 		<content>
 			<control:ArView id="arView" 
-				press="onPress"/>
+				press="onPress" />
+
+			<List width="250px" 
+				visible="{/selectedCar/visible}" 
+				headerText="{/selectedCar/title}" 
+				items="{/selectedCar/items}" 
+				class="slidein headerBackground" 
+				backgroundDesign="Solid">
+				<ObjectListItem title="{name}" 
+					number="{value}" 
+					numberUnit="{unit}"/>
+			</List>
 		</content>
 		<footer>
 			<OverflowToolbar class="pointerauto sliderToolbar">
