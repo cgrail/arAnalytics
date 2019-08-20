@@ -21,6 +21,8 @@ Expected behavior:
 
 You should see a UI5 application with lines for the x,y and z axis. With your mouse you can navigate through the 3D space.
 
+![Initial version](images/step4.png)
+
 ## Step 5: Create Sphere in space
 
 Open the file ```ARAnalytics``` which contains the controller of our main view.
