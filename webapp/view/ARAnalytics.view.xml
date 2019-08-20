@@ -8,7 +8,8 @@
 		backgroundDesign="Transparent" 
 		class="sapUiContentPadding overlay">
 		<content>
-			<control:ArView id="arView" />
+			<control:ArView id="arView" 
+				press="onPress"/>
 		</content>
 		<footer>
 			<OverflowToolbar class="pointerauto sliderToolbar">

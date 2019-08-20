@@ -106,6 +106,23 @@ sap.ui.define([
 				const sphereData = sphere.userData.sizeAndDimension[sliderIndex];
 				sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
 			});
+		},
+
+		onPress(evt) {
+			const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
+			this.viewModel.getProperty("/spheres").forEach(sphere => {
+				const isSelectedNode = sphere === intersectedSphere;
+				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
+			});
+		},
+
+		getIntersectedSphere(position) {
+			const raycaster = new THREE.Raycaster();
+			raycaster.setFromCamera(position, this.arView.getCamera());
+			const intersects = raycaster.intersectObjects(this.viewModel.getProperty("/spheres"));
+			if (intersects.length > 0) {
+				return intersects[0].object;
+			}
 		}
 
 	});
