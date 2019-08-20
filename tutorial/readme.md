@@ -460,6 +460,11 @@ Call the function ```showDetails()``` inside of the ```onPress()``` function.
 ```javascript
 onPress(evt) {
   const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
+  if (!intersectedSphere || intersectedSphere.length == 0) {
+    this.viewModel.setProperty("/selectedCar", {
+      visible: false
+    });
+  }
   this.viewModel.getProperty("/spheres").forEach(sphere => {
     const isSelectedNode = sphere === intersectedSphere;
     sphere.material.opacity = isSelectedNode ? 0.5 : 1;
@@ -488,4 +493,4 @@ The result of this step should look like this:
 
 ## Step 12: Run the app in Augmented Reality
 
-This app runs in the browser as well as in the WebXR Viewer. Open the 
+This app runs in the browser as well as in the WebXR Viewer. Open the app in the ```WebXR Viewer```  on your iPhone/iPad
