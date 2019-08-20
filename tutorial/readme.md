@@ -6,7 +6,7 @@ https://www.sap.com/developer/topics/sap-webide.html
 
 ## Step 2: Clone Git Repository into SAP Web IDE
 
-https://github.com/cgrail/arAnalytics
+https://github.com/cgrail/arAnalyticsTutorial
 
 ## Step 3: Install WebXR Viewer on your iPhone/iPad
 
