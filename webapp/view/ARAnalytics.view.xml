@@ -8,7 +8,7 @@
 		backgroundDesign="Transparent" 
 		class="sapUiContentPadding overlay">
 		<content>
-			<control:ArView />
+			<control:ArView id="arView" />
 		</content>
 	</Page>
 </mvc:View>
