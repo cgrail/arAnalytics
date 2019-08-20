@@ -97,6 +97,15 @@ sap.ui.define([
 			this.xAxisLabel.lookAt(this.arView.getCamera().position);
 			this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
 			this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+		},
+
+		onTimeSliderChange(evt) {
+			const sliderIndex = evt.getSource().getValue();
+			this.viewModel.setProperty("/sliderIndex", sliderIndex);
+			this.viewModel.getProperty("/spheres").forEach((sphere) => {
+				const sphereData = sphere.userData.sizeAndDimension[sliderIndex];
+				sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
+			});
 		}
 
 	});

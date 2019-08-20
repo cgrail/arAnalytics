@@ -10,5 +10,21 @@
 		<content>
 			<control:ArView id="arView" />
 		</content>
+		<footer>
+			<OverflowToolbar class="pointerauto sliderToolbar">
+				<ToolbarSpacer/>
+				<Text text="Time"/>
+				<Slider showAdvancedTooltip="true" 
+					width="80%" 
+					max="2" 
+					value="0" 
+					liveChange="onTimeSliderChange">
+					<customTooltips>
+						<control:SliderTooltip toolTips="{/metaData/timeSeries}"/>
+					</customTooltips>
+				</Slider>
+				<ToolbarSpacer/>
+			</OverflowToolbar>
+		</footer>
 	</Page>
 </mvc:View>
