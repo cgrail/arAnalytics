@@ -23,6 +23,7 @@ sap.ui.define([
 					const spheres = sizeAndDimensions.map((sphereData) => this.createSphere(sphereData));
 					this.viewModel.setProperty("/metaData", metaData);
 					this.viewModel.setProperty("/spheres", spheres);
+					this.createAxisLabels();
 				});
 		},
 
@@ -59,6 +60,33 @@ sap.ui.define([
 			sphere.position.copy(new THREE.Vector3(sizeAndDimension.x, sizeAndDimension.y, sizeAndDimension.z));
 			scene.add(sphere);
 			return sphere;
+		},
+
+		createAxisLabels() {
+			const loader = new THREE.FontLoader();
+			loader.load("fonts/72_Regular.typeface.json", (font) => {
+				this.xAxisLabel = this.createAxisLabel("x", font, 0.9, 0.05, 0);
+				this.yAxisLabel = this.createAxisLabel("y", font, 0, 0.6, 0.05);
+				this.zAxisLabel = this.createAxisLabel("z", font, -0.05, 0.05, 1.2);
+			});
+		},
+
+		createAxisLabel(dimension, font, x, y, z) {
+			const text = this.viewModel.getProperty(`/metaData/dimensionConfig/${dimension}/label`);
+			const scene = this.arView.getScene();
+			const textGeometry = new THREE.TextGeometry(text, {
+				font: font,
+				size: 0.07,
+				height: 0.01,
+				curveSegments: 3
+			});
+			const textMaterial = new THREE.MeshPhongMaterial({
+				color: new THREE.Color("grey")
+			});
+			const textObj = new THREE.Mesh(textGeometry, textMaterial);
+			textObj.position.set(x, y, z);
+			scene.add(textObj);
+			return textObj;
 		}
 
 	});
