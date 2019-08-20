@@ -29,7 +29,7 @@ Open the file ```ARAnalytics``` which contains the controller of our main view.
 
 Path: ```webapp/controller/ARAnalytics.controller.js```
 
-Create the function ```createSphere``` which creates a sphere at a given location.
+Create the function ```createSphere()``` which creates a sphere at a given location.
 
 ```javascript
 createSphere(sphereData) {
@@ -48,7 +48,7 @@ createSphere(sphereData) {
 }
 ```
 
-Create the function ```onAfterRendering``` which is called once the app has been rendered and create a sphere at the 3D location x: 0, y: 0 and z: 0 with a size of 0.1. WebXR is based on the metric system and therefor a size of 0.1 represents 10cm which is about 4" large.
+Create the function ```onAfterRendering()``` which is called once the app has been rendered and create a sphere at the 3D location x: 0, y: 0 and z: 0 with a size of 0.1. WebXR is based on the metric system and therefor a size of 0.1 represents 10cm which is about 4" large.
 
 ```javascript
 onAfterRendering() {
@@ -128,7 +128,7 @@ return Controller.extend("webxr-ui5.controller.ARAnalytics", {
     ...
 ```
 
-Read the file ```carData.json``` and create spheres for the data.
+Read the file ```carData.json``` in the function ```onAfterRendering()``` and create spheres for the data.
 
 ```javascript
 fetch("data/carData.json")
@@ -215,3 +215,90 @@ sap.ui.define([
 If you re-run your application again it should look like this.
 
 ![Read data result](images/step6.png)
+
+## Step 7: Create Axis Labels
+
+Now we're going to create labels for the axis, so that users are able to understand what the position in space means.
+
+Create the function ```createAxisLabels()``` which creates labels for the x,y and z axis.
+
+```javascript
+createAxisLabels() {
+  const loader = new THREE.FontLoader();
+  loader.load("fonts/72_Regular.typeface.json", (font) => {
+    this.xAxisLabel = this.createAxisLabel("x", font, 0.9, 0.05, 0);
+    this.yAxisLabel = this.createAxisLabel("y", font, 0, 0.6, 0.05);
+    this.zAxisLabel = this.createAxisLabel("z", font, -0.05, 0.05, 1.2);
+  });
+},
+
+createAxisLabel(dimension, font, x, y, z) {
+  const text = this.viewModel.getProperty(`/metaData/dimensionConfig/${dimension}/label`);
+  const scene = this.arView.getScene();
+  const textGeometry = new THREE.TextGeometry(text, {
+    font: font,
+    size: 0.07,
+    height: 0.01,
+    curveSegments: 3
+  });
+  const textMaterial = new THREE.MeshPhongMaterial({
+    color: new THREE.Color("grey")
+  });
+  const textObj = new THREE.Mesh(textGeometry, textMaterial);
+  textObj.position.set(x, y, z);
+  scene.add(textObj);
+  return textObj;
+}
+```
+
+Call the function ```createAxisLabels()``` once the data has been read and the spheres have been created.
+
+```javascript
+onAfterRendering() {
+  ...
+  fetch("data/carData.json")
+    .then(result => result.json())
+    .then(carData => {
+      ...
+      this.createAxisLabels();
+    });
+},
+```
+
+The result of this step should look like this:
+
+![Create Axis result](images/step7.png)
+
+## Step 8: Axis Labels should look at camera
+
+Currently the axis labels are not readable from every angle. We want that the axis should always look at the camera. We need to update the rotation of the axis labels whenever the camera moves.
+
+Create the function ```updateCallback()``` which is called from Three.js for every rendered frame. This function calls the ```lookAt``` camera function from the xAxisLabel and applies this rotation to the y and z axis labels. Calling the ```lookAt``` camera function for each label individually will result in unsynchronized rotations which looks odd. But feel free to try it out.
+
+```javascript
+updateCallback() {
+  if (!this.xAxisLabel) {
+    return;
+  }
+  this.xAxisLabel.lookAt(this.arView.getCamera().position);
+  this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+  this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+}
+```
+
+Register the function ```updateCallback()``` as a update callback for the AR View control in ```onAfterRendering()```.
+
+```javascript
+updateCallback() {
+  if (!this.xAxisLabel) {
+    return;
+  }
+  this.xAxisLabel.lookAt(this.arView.getCamera().position);
+  this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+  this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+}
+```
+
+The result of this step should look like this:
+
+![Axis look at camera](images/step8.png)
