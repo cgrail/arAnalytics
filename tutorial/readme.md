@@ -71,3 +71,5 @@ Path: ```webapp/view/ARAnalytics.view.xml```
 ```
 
 Now you can run the application and you will see a sphere in space at the location 0,0,0.
+
+![Create Sphere result](images/step5.png)
