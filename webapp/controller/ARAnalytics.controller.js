@@ -13,6 +13,7 @@ sap.ui.define([
 		onAfterRendering() {
 
 			this.arView = this.byId("arView");
+			this.arView.setUpdateCallback((() => this.updateCallback()));
 			this.getView().setModel(this.viewModel);
 
 			fetch("data/carData.json")
@@ -87,6 +88,15 @@ sap.ui.define([
 			textObj.position.set(x, y, z);
 			scene.add(textObj);
 			return textObj;
+		},
+
+		updateCallback() {
+			if (!this.xAxisLabel) {
+				return;
+			}
+			this.xAxisLabel.lookAt(this.arView.getCamera().position);
+			this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+			this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
 		}
 
 	});
