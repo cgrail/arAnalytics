@@ -30,17 +30,7 @@ sap.ui.define([
 				const mousePos = new THREE.Vector2();
 				mousePos.x = (event.clientX / window.innerWidth) * 2 - 1;
 				mousePos.y = -(event.clientY / window.innerHeight) * 2 + 1;
-				const raycaster = new THREE.Raycaster();
-				raycaster.setFromCamera(mousePos, camera);
-				const intersects = raycaster.intersectObjects(scene.children);
-				for (var i = 0; i < intersects.length; i++) {
-					if (intersects[i].object.type === "Mesh") {
-						this.firePress({
-							uuid: intersects[i].object.uuid
-						});
-						break;
-					}
-				}
+				this.firePress(mousePos);
 			};
 			document.addEventListener("mousedown", (event) => {
 				fireMousePress(event);

@@ -35,14 +35,23 @@ sap.ui.define([
 		},
 
 		onPress(evt) {
-			const clickedUuid = evt.getParameter("uuid");
+			const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
 			this.viewModel.getProperty("/spheres").forEach(sphere => {
-				const isSelectedNode = sphere.uuid === clickedUuid;
+				const isSelectedNode = sphere === intersectedSphere;
 				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
 				if (isSelectedNode) {
 					this.showDetails(sphere.userData);
 				}
 			});
+		},
+
+		getIntersectedSphere(position) {
+			const raycaster = new THREE.Raycaster();
+			raycaster.setFromCamera(position, this.arView.getCamera());
+			const intersects = raycaster.intersectObjects(this.viewModel.getProperty("/spheres"));
+			if (intersects.length > 0) {
+				return intersects[0].object;
+			}
 		},
 
 		showDetails(nodeData) {
