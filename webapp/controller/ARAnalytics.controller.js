@@ -8,17 +8,42 @@ sap.ui.define([
 
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
 
+		viewModel: new JSONModel(),
+
 		onAfterRendering() {
+
 			this.arView = this.byId("arView");
-			const sphereData = {
-				sizeAndDimension: [{
-					x: 0,
-					y: 0,
-					z: 0,
-					size: 0.1
-				}]
-			};
-			this.createSphere(sphereData);
+			this.getView().setModel(this.viewModel);
+
+			fetch("data/carData.json")
+				.then(result => result.json())
+				.then(carData => {
+					const metaData = carData.metaData;
+					const sizeAndDimensions = carData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
+					const spheres = sizeAndDimensions.map((sphereData) => this.createSphere(sphereData));
+					this.viewModel.setProperty("/metaData", metaData);
+					this.viewModel.setProperty("/spheres", spheres);
+				});
+		},
+
+		mapDataToSizeAndDimension(sphereData, metaData) {
+			const dimensionConfig = metaData.dimensionConfig;
+			const sphereDataWithSizeAndDimension = Object.assign({}, sphereData);
+			sphereDataWithSizeAndDimension.sizeAndDimension = metaData.timeSeries.map((month) => {
+				function getDimensionValue(dimension) {
+					const value = sphereData[dimension.key][month];
+					const minMax = metaData.minMax[dimension.key];
+					return (value - minMax.min) / (minMax.max - minMax.min);
+				}
+				return {
+					month: month,
+					size: getDimensionValue(dimensionConfig.size) * 0.1,
+					x: getDimensionValue(dimensionConfig.x),
+					y: getDimensionValue(dimensionConfig.y),
+					z: getDimensionValue(dimensionConfig.z)
+				};
+			});
+			return sphereDataWithSizeAndDimension;
 		},
 
 		createSphere(sphereData) {
