@@ -27,7 +27,7 @@ sap.ui.define([
 				.then(carData => {
 					const metaData = carData.metaData;
 					const sizeAndDimensions = carData.items.map((item) => this.mapDataToSizeAndDimension(item, metaData));
-					const spheres = sizeAndDimensions.map(this.createSphere.bind(this));
+					const spheres = sizeAndDimensions.map((sphereData) => this.createSphere(sphereData));
 					this.viewModel.setProperty("/metaData", metaData);
 					this.viewModel.setProperty("/spheres", spheres);
 					this.createAxisLabels();

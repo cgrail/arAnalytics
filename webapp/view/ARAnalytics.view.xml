@@ -23,7 +23,7 @@
 			</List>
 		</content>
 		<footer>
-			<OverflowToolbar class="pointerauto">
+			<OverflowToolbar class="pointerauto sliderToolbar">
 				<ToolbarSpacer/>
 				<Text text="Time"/>
 				<Slider showAdvancedTooltip="true" 

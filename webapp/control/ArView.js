@@ -95,7 +95,7 @@ sap.ui.define([
 				}
 			}
 			if (THREE.WebXRUtils) {
-				THREE.WebXRUtils.getDisplays().then(() => init());
+				THREE.WebXRUtils.getDisplays().then(init);
 			} else {
 				init();
 			}

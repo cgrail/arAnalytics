@@ -38,11 +38,12 @@
 				}).placeAt("content");
 			}
 			if (/WebXRViewer/.test(navigator.userAgent)) {
+				document.body.classList.add("xrVersion");
 				sap.ui.define(["sap/ui/dom/includeScript"], function (fnIncludeScript) {
 					fnIncludeScript("//mozilla.github.io/three.xr.js/dist/three.xr.js", null, startApp);
 				});
 			} else {
-				this.document.body.style.backgroundColor = "#2C4E6C";
+				document.body.style.backgroundColor = "#2C4E6C";
 				startApp();
 			}
 		});
