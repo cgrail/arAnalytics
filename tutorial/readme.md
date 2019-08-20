@@ -302,3 +302,93 @@ updateCallback() {
 The result of this step should look like this:
 
 ![Axis look at camera](images/step8.png)
+
+## Step 9: Time Slider
+
+Currently the data is static. We want to be able to select different dates. 
+
+Add a slider control into the footer of the ```webapp/view/ARAnalytics.view.xml```
+
+
+```xml
+<mvc:View xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m" 
+	xmlns:control="webxr-ui5.control" 
+	controllerName="webxr-ui5.controller.ARAnalytics">
+	<Page title="Augmented Reality Analytics with SAP UI5 and WebXR" 
+		backgroundDesign="Transparent" 
+		class="sapUiContentPadding overlay">
+		<content>
+			<control:ArView id="arView" />
+		</content>
+		<footer>
+			<OverflowToolbar class="pointerauto sliderToolbar">
+				<ToolbarSpacer/>
+				<Text text="Time"/>
+				<Slider showAdvancedTooltip="true" 
+					width="80%" 
+					max="2" 
+					value="0" 
+					liveChange="onTimeSliderChange">
+					<customTooltips>
+						<control:SliderTooltip toolTips="{/metaData/timeSeries}"/>
+					</customTooltips>
+				</Slider>
+				<ToolbarSpacer/>
+			</OverflowToolbar>
+		</footer>
+	</Page>
+</mvc:View>
+```
+
+Add the function ```onTimeSliderChange()``` in the ```ARAnalytics.controller.js``` which is called when the slider is changed.
+
+```javascript
+onTimeSliderChange(evt) {
+  const sliderIndex = evt.getSource().getValue();
+  this.viewModel.setProperty("/sliderIndex", sliderIndex);
+  this.viewModel.getProperty("/spheres").forEach((sphere) => {
+    const sphereData = sphere.userData.sizeAndDimension[sliderIndex];
+    sphere.position.copy(new THREE.Vector3(sphereData.x, sphereData.y, sphereData.z));
+  });
+}
+```
+
+The result of this step should look like this:
+
+![Time Slider](images/step9.png)
+
+## Step 9: Hit Testing
+
+Now we want to be able to react selecting a sphere. Therefore we need to register the ```press``` handler in the ```webapp/view/ARAnalytics.view.xml```
+
+```xml
+<control:ArView id="arView" press="onPress"/>
+```
+
+Add the function ```onPress()``` in the ```ARAnalytics.controller.js``` which is called when a user is clicking with the mouse on the ArView or touching the screen with the finger. Once the user selects a sphere the opacity of the sphere is reduced to 70%.
+
+```javascript
+onPress(evt) {
+  const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
+  this.viewModel.getProperty("/spheres").forEach(sphere => {
+    const isSelectedNode = sphere === intersectedSphere;
+    sphere.material.opacity = isSelectedNode ? 0.5 : 1;
+  });
+},
+
+getIntersectedSphere(position) {
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(position, this.arView.getCamera());
+  const intersects = raycaster.intersectObjects(this.viewModel.getProperty("/spheres"));
+  if (intersects.length > 0) {
+    return intersects[0].object;
+  }
+}
+```
+
+The result of this step should look like this:
+
+![Hit Testing](images/step10.png)
