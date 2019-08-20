@@ -360,7 +360,7 @@ The result of this step should look like this:
 
 ![Time Slider](images/step9.png)
 
-## Step 9: Hit Testing
+## Step 10: Hit Testing
 
 Now we want to be able to react selecting a sphere. Therefore we need to register the ```press``` handler in the ```webapp/view/ARAnalytics.view.xml```
 
@@ -392,3 +392,100 @@ getIntersectedSphere(position) {
 The result of this step should look like this:
 
 ![Hit Testing](images/step10.png)
+
+## Step 11: Show details
+
+We want to also be able to show the details of a selected sphere, therefor we add a list which lists all properties of the selected sphere in the  ```webapp/view/ARAnalytics.view.xml```
+
+```xml
+...
+<content>
+  <control:ArView id="arView" 
+    press="onPress" />
+  <List width="250px" 
+    visible="{/selectedCar/visible}" 
+    headerText="{/selectedCar/title}" 
+    items="{/selectedCar/items}" 
+    class="slidein headerBackground" 
+    backgroundDesign="Solid">
+    <ObjectListItem title="{name}" 
+      number="{value}" 
+      numberUnit="{unit}"/>
+  </List>
+</content>
+...
+```
+
+Init the model in the in the ```ARAnalytics.controller.js```.
+
+```javascript
+...
+return Controller.extend("webxr-ui5.controller.ARAnalytics", {
+
+  viewModel: new JSONModel({
+    sliderIndex: 0,
+    selectedCar: {
+      visible: false
+    }
+  }),
+
+  onAfterRendering() {
+...
+```
+
+Add the function ```showDetails()``` which sets the data for the list.
+
+```javascript
+showDetails(nodeData) {
+  const currentKey = this.viewModel.getProperty("/metaData/timeSeries/" + this.viewModel.getProperty("/sliderIndex"));
+  const dimensions = Object.values(this.viewModel.getProperty("/metaData/dimensionConfig"));
+  const nodeDetails = dimensions.map(dimension => {
+    return {
+      name: dimension.label,
+      value: nodeData[dimension.key][currentKey],
+      unit: dimension.unit
+    };
+  });
+  this.viewModel.setProperty("/selectedCar", {
+    node: nodeData,
+    visible: true,
+    title: nodeData.name,
+    items: nodeDetails
+  });
+},
+```
+
+Call the function ```showDetails()``` inside of the ```onPress()``` function.
+
+```javascript
+onPress(evt) {
+  const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
+  this.viewModel.getProperty("/spheres").forEach(sphere => {
+    const isSelectedNode = sphere === intersectedSphere;
+    sphere.material.opacity = isSelectedNode ? 0.5 : 1;
+    if (isSelectedNode) {
+      this.showDetails(sphere.userData);
+    }
+  });
+},
+```
+
+Update the details when the time slider changes in the function ```onTimeSliderChange()```
+
+```javascript
+onTimeSliderChange(evt) {
+  ...
+  const selectedNode = this.viewModel.getProperty("/selectedCar/node");
+  if (selectedNode) {
+    this.showDetails(selectedNode);
+  }
+},
+```
+
+The result of this step should look like this:
+
+![Show Details](images/step11.png)
+
+## Step 12: Run the app in Augmented Reality
+
+This app runs in the browser as well as in the WebXR Viewer. Open the 
