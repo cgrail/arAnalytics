@@ -26,17 +26,17 @@ sap.ui.define([
 
 			var camera, scene;
 
-			const fireMousePress = (event) => {
+			const fireMousePress = (x, y) => {
 				const mousePos = new THREE.Vector2();
-				mousePos.x = (event.clientX / window.innerWidth) * 2 - 1;
-				mousePos.y = -(event.clientY / window.innerHeight) * 2 + 1;
+				mousePos.x = (x / window.innerWidth) * 2 - 1;
+				mousePos.y = -(y / window.innerHeight) * 2 + 1;
 				this.firePress(mousePos);
 			};
 			document.addEventListener("mousedown", (event) => {
-				fireMousePress(event);
+				fireMousePress(event.clientX, event.clientY);
 			});
 			document.addEventListener("touchstart", (event) => {
-				fireMousePress(event);
+				fireMousePress(event.touches[0].clientX, event.touches[0].clientY);
 			});
 
 			const update = () => {

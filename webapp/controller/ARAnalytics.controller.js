@@ -35,6 +35,11 @@ sap.ui.define([
 
 		onPress(evt) {
 			const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
+			if (!intersectedSphere || intersectedSphere.length == 0) {
+				this.viewModel.setProperty("/selectedCar", {
+					visible: false
+				});
+			}
 			this.viewModel.getProperty("/spheres").forEach(sphere => {
 				const isSelectedNode = sphere === intersectedSphere;
 				sphere.material.opacity = isSelectedNode ? 0.5 : 1;
