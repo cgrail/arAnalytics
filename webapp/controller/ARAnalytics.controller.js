@@ -8,7 +8,6 @@ sap.ui.define([
 
 	return Controller.extend("webxr-ui5.controller.ARAnalytics", {
 
-		lookAtCameraObjects: [],
 		viewModel: new JSONModel({
 			sliderIndex: 0,
 			selectedCar: {
@@ -73,16 +72,12 @@ sap.ui.define([
 		},
 
 		updateCallback() {
-			const camera = this.arView.getCamera();
-			var rotation;
-			for (const textObject of this.lookAtCameraObjects) {
-				if (rotation) {
-					textObject.setRotationFromEuler(rotation);
-				} else {
-					textObject.lookAt(camera.position);
-					rotation = textObject.rotation;
-				}
+			if (!this.xAxisLabel) {
+				return;
 			}
+			this.xAxisLabel.lookAt(this.arView.getCamera().position);
+			this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
+			this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
 		},
 
 		mapDataToSizeAndDimension(sphereData, metaData) {
@@ -123,9 +118,9 @@ sap.ui.define([
 		createAxisLabels() {
 			const loader = new THREE.FontLoader();
 			loader.load("fonts/72_Regular.typeface.json", (font) => {
-				this.createAxisLabel("x", font, 0.9, 0.05, 0);
-				this.createAxisLabel("y", font, 0, 0.6, 0.05);
-				this.createAxisLabel("z", font, -0.05, 0.05, 1.2);
+				this.xAxisLabel = this.createAxisLabel("x", font, 0.9, 0.05, 0);
+				this.yAxisLabel = this.createAxisLabel("y", font, 0, 0.6, 0.05);
+				this.zAxisLabel = this.createAxisLabel("z", font, -0.05, 0.05, 1.2);
 			});
 		},
 
@@ -143,7 +138,6 @@ sap.ui.define([
 			});
 			const textObj = new THREE.Mesh(textGeometry, textMaterial);
 			textObj.position.set(x, y, z);
-			this.lookAtCameraObjects.push(textObj);
 			scene.add(textObj);
 			return textObj;
 		},
