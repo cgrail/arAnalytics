@@ -24,7 +24,7 @@ You should see a UI5 application with lines for the x (red), y (green) and z (bl
 
 ## Step 5: Create Sphere in space
 
-Open the file ```ARAnalytics``` which contains the controller of our main view.
+Open the file ```ARAnalytics.controller.js``` which contains the controller of our main view.
 
 Path: ```webapp/controller/ARAnalytics.controller.js```
 
@@ -91,7 +91,7 @@ Path: ```webapp/data/carData.json```
 >
 > The items itself contain data for different dates as well as a name for the specific car. All available dates are stored in the property ```metadata.timeSeries```.
 
-Open the file ```ARAnalytics``` which contains the controller of our main view.
+Open the file ```ARAnalytics.controller.js``` which contains the controller of our main view.
 
 Path: ```webapp/controller/ARAnalytics.controller.js```
 
@@ -292,14 +292,11 @@ updateCallback() {
 Register the function ```updateCallback()``` as a update callback for the AR View control in ```onAfterRendering()```.
 
 ```javascript
-updateCallback() {
-  if (!this.xAxisLabel) {
-    return;
-  }
-  this.xAxisLabel.lookAt(this.arView.getCamera().position);
-  this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
-  this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
-}
+onAfterRendering() {
+  this.arView = this.byId("arView");
+  this.arView.setUpdateCallback((() => this.updateCallback()));
+  ...
+},
 ```
 
 The result of this step should look like this:
