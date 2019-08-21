@@ -14,12 +14,11 @@ https://itunes.apple.com/us/app/webxr-viewer/id1295998056
 
 ## Step 4: Run the app on your Desktop and WebXR Viewer
 
-Open “index.html”
-Press “run“ button
+Open “webapp/index.html”; Press “run“ button.
 
 Expected behavior:
 
-You should see a UI5 application with lines for the x,y and z axis. With your mouse you can navigate through the 3D space.
+You should see a UI5 application with lines for the x (red), y (green) and z (blue) axis. With your mouse you can navigate through the 3D space.
 
 ![Initial version](images/step4.png)
 
@@ -48,7 +47,9 @@ createSphere(sphereData) {
 }
 ```
 
-Create the function ```onAfterRendering()``` which is called once the app has been rendered and create a sphere at the 3D location x: 0, y: 0 and z: 0 with a size of 0.1. WebXR is based on the metric system and therefor a size of 0.1 represents 10cm which is about 4" large.
+<i>Tip: use short-cut defined in menu "Edit"->"Beautify" to format the code in the editor.</i>
+
+Create the function ```onAfterRendering()``` which is called once the app has been rendered and create a sphere at the 3D location x: 0, y: 0 and z: 0 with a size of 0.1. WebXR is based on the metric system and therefor a size of 0.1 represents 10cm which is about 4" large. To do so, add the following code above last added function ```createSphere()```:
 
 ```javascript
 onAfterRendering() {
