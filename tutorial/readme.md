@@ -386,6 +386,7 @@ getIntersectedSphere(position) {
   if (intersects.length > 0) {
     return intersects[0].object;
   }
+  return null;
 }
 ```
 
