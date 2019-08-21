@@ -135,6 +135,7 @@ sap.ui.define([
 			if (intersects.length > 0) {
 				return intersects[0].object;
 			}
+			return null;
 		},
 
 		showDetails(nodeData) {
