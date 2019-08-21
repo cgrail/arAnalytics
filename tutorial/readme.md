@@ -79,15 +79,17 @@ Now you can run the application and you will see a sphere in space at the locati
 
 ## Step 6: Read data
 
-For this example we've created some data which you can use. You could also create your own data set and load it into the app. The provided data is sales data for cars. It contains data about the sales volume, average discount for a car, average customer satisfaction and average combined mpg for given dates.
+For this example we've created [some data](../webapp/data/carData.json) which you can use. You could also create your own data set and load it into the app.  
 
-The data is split into two parts: The data itself as node ```items``` and the metadata as node ```metaData``` which contains information about how the data should be represented. 
+Path: ```webapp/data/carData.json``` 
 
-In our example we've mapped the size of a sphere to the attribute sales volume. The average discount of a car is mapped to the position on the x axis. The average customer satisfaction is mapped to the position on the y axis. And the average combined mpg is mapped to the position on the z axis.
-
-[data/carData.json](../webapp/data/carData.json)
-
-The items itself contain data for different dates as well as a name for the specific car. All available dates are stored in the property ```metadata.timeSeries```.
+> The provided data is sales data for cars. It contains data about the sales volume, average discount for a car, average customer satisfaction and average combined mpg for given car.
+>
+> The data is split into two parts: The data itself as node ```items``` and the metadata as node ```metaData``` which contains information about how the data should be represented. 
+>
+> In our example we've mapped the size of a sphere to the attribute sales volume. The average discount of a car is mapped to the position on the x axis. The average customer satisfaction is mapped to the position on the y axis. And the average combined mpg is mapped to the position on the z axis.
+>
+> The items itself contain data for different dates as well as a name for the specific car. All available dates are stored in the property ```metadata.timeSeries```.
 
 Open the file ```ARAnalytics``` which contains the controller of our main view.
 
@@ -129,7 +131,7 @@ return Controller.extend("webxr-ui5.controller.ARAnalytics", {
     ...
 ```
 
-Read the file ```carData.json``` in the function ```onAfterRendering()``` and create spheres for the data.
+Read the file ```carData.json``` in the function ```onAfterRendering()``` and create spheres for the data. The previously created sphere on the fix location (0, 0, 0) can be removed.
 
 ```javascript
 fetch("data/carData.json")
