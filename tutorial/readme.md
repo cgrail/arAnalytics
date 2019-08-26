@@ -1,14 +1,24 @@
 # Develop an Augmented Reality Analytics app with SAP UI5 and WebXR
 
+In this tutorial you'll develop a 3D analytical app in SAP UI5. Throught the new web standard WebXR this app will run as an Augmented Reality app on your mobile phone.
+
 ## Step 1: Open SAP Web IDE
+
+Click on the ```Start Trial``` button on the following page to get to the SAP Cloud Platform Cockpit and click then on the ```Launch SAP Web IDE``` link to get to the Web IDE.
 
 https://www.sap.com/developer/topics/sap-webide.html
 
 ## Step 2: Clone Git Repository into SAP Web IDE
 
-https://github.com/cgrail/arAnalyticsTutorial
+- From the File menu, choose Git  Clone Repository.
+- In the URL field, enter the Git repository URL https://github.com/cgrail/arAnalyticsTutorial and press Enter.
+- Choose Clone. The cloning starts. When the process is finished, the content of the repository appears in the workspace.
+
+For further information please refer to the [SAP Web IDE documentation](https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US/3c7e5f3accbd48d7ab5229bf503317c4.html)
 
 ## Step 3: Install WebXR Viewer on your iPhone/iPad
+
+Start the installation of the WebXR Viewer on your iPhone or iPad. You'll need this app later in the process.
 
 https://itunes.apple.com/us/app/webxr-viewer/id1295998056
 
@@ -494,4 +504,4 @@ The result of this step should look like this:
 
 ## Step 12: Run the app in Augmented Reality
 
-This app runs in the browser as well as in the WebXR Viewer. Open the app in the ```WebXR Viewer```  on your iPhone/iPad
+This app runs in the browser as well as in the WebXR Viewer. Open the app in the ```WebXR Viewer```  on your iPhone/iPad. The WebXR Viewer from Mozilla is a reference implementation of the web standard WebXR. The WebXR support is not yet released for Safari, but Google is currently working on WebXR support in Chrome. For further information about WebXR please go to: https://www.w3.org/TR/webxr/
