@@ -461,7 +461,7 @@ Call the function ```showDetails()``` inside of the ```onPress()``` function.
 ```javascript
 onPress(evt) {
   const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
-  if (!intersectedSphere || intersectedSphere.length == 0) {
+  if (!intersectedSphere || intersectedSphere.length === 0) {
     this.viewModel.setProperty("/selectedCar", {
       visible: false
     });
