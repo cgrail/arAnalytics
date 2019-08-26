@@ -368,7 +368,7 @@ Now we want to be able to react selecting a sphere. Therefore we need to registe
 <control:ArView id="arView" press="onPress"/>
 ```
 
-Add the function ```onPress()``` in the ```ARAnalytics.controller.js``` which is called when a user is clicking with the mouse on the ArView or touching the screen with the finger. Once the user selects a sphere the opacity of the sphere is reduced to 70%.
+Add the function ```onPress()``` in the ```ARAnalytics.controller.js``` which is called when a user is clicking with the mouse on the ArView or touching the screen with the finger. Once the user selects a sphere the opacity of the sphere is reduced to 50%.
 
 ```javascript
 onPress(evt) {
@@ -461,7 +461,7 @@ Call the function ```showDetails()``` inside of the ```onPress()``` function.
 ```javascript
 onPress(evt) {
   const intersectedSphere = this.getIntersectedSphere(evt.getParameters());
-  if (!intersectedSphere || intersectedSphere.length == 0) {
+  if (!intersectedSphere || intersectedSphere.length === 0) {
     this.viewModel.setProperty("/selectedCar", {
       visible: false
     });
