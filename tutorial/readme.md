@@ -1,6 +1,6 @@
 # Develop an Augmented Reality Analytics app with SAP UI5 and WebXR
 
-In this tutorial you'll develop a 3D analytical app in SAP UI5. Throught the new web standard WebXR this app will run as an Augmented Reality app on your mobile phone.
+In this tutorial you'll develop a 3D analytical app in SAP UI5. Through the new web standard WebXR this app will run as an Augmented Reality app on your mobile phone.
 
 ## Step 1: Open SAP Web IDE
 
