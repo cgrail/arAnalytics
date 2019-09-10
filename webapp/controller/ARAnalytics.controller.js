@@ -78,7 +78,7 @@ sap.ui.define([
 		},
 
 		createAxisLabel(dimension, font, x, y, z) {
-			const text = this.viewModel.getProperty(`/metaData/dimensionConfig/${dimension}/label`);
+			const text = this.viewModel.getProperty("/metaData/dimensionConfig/" + dimension + "/label");
 			const scene = this.arView.getScene();
 			const textGeometry = new THREE.TextGeometry(text, {
 				font: font,
