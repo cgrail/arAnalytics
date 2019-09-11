@@ -2,6 +2,16 @@
 
 This repository demonstrates how to develop Augmented Reality apps with WebXR and SAP UI5.
 
+# Tutorial
+
+A complete hands-on tutorial with step-by-step instructions can be found here: https://github.com/cgrail/arAnalytics/tree/master/tutorial
+
+# Running example
+
+The finished version of the example can be found here: https://grails.de/arAnalytics/webapp
+
+[![AR Analyics Screenshot](tutorial/images/step11.png)](https://grails.de/arAnalytics/webapp)
+
 # Requirements
 
 To be able to run the web app you'll need to install the WebXR Viewer on your iPhone or iPad.
