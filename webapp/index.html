@@ -10,8 +10,6 @@
 
 	<title>Augmented Reality Analytics</title>
 
-	<script src="//mozilla.github.io/three.xr.js/vendor/three.js"></script>
-	<script src="utils/OrbitControls.js"></script>
 
 	<script id="sap-ui-bootstrap"
 			src="https://sapui5.hana.ondemand.com/1.64.0/resources/sap-ui-core.js"
@@ -37,14 +35,50 @@
 					viewName: "webxr-ui5.view.ARAnalytics"
 				}).placeAt("content");
 			}
-			if (/WebXRViewer/.test(navigator.userAgent)) {
-				document.body.classList.add("xrVersion");
-				sap.ui.define(["sap/ui/dom/includeScript"], function (fnIncludeScript) {
-					fnIncludeScript("//mozilla.github.io/three.xr.js/dist/three.xr.js", null, startApp);
-				});
+			if (navigator.xr && /(Android).+(Chrome\/7[6|7|8])/.test(navigator.userAgent)) {
+				handleAndroid();
+			} else if (/WebXRViewer/.test(navigator.userAgent)) {
+				handleIOS();
 			} else {
+				handleDesktop();
+			}
+			function handleDesktop() {
 				document.body.style.backgroundColor = "#2C4E6C";
-				startApp();
+				loadScript("//mozilla.github.io/three.xr.js/vendor/three.js")
+					.then(() => loadScript("utils/OrbitControls.js"))
+					.then(function () {
+						startApp();
+					});
+			}
+			function handleIOS() {
+				document.body.classList.add("xrVersion");
+				loadScript("//mozilla.github.io/three.xr.js/vendor/three.js")
+					.then(() => loadScript("//mozilla.github.io/three.xr.js/dist/three.xr.js"))
+					.then(() => startApp());
+			}
+			function handleAndroid() {
+				loadScript("https://threejs.org/build/three.js")
+					.then(function () {
+						const startXRButton = document.createElement("BUTTON");
+						startXRButton.onclick = () => {
+							navigator.xr.requestSession('immersive-ar').then((session) => {
+								window.arSession = session;
+								startApp();
+							});
+
+						};
+						startXRButton.innerText = "Start AR";
+						document.body.append(startXRButton);
+					});
+			}
+
+			function loadScript(url) {
+				return new Promise(function (resolve) {
+					var s = document.createElement("script");
+					s.setAttribute("src", url);
+					s.onload = resolve;
+					document.body.appendChild(s);
+				});
 			}
 		});
 	</script>

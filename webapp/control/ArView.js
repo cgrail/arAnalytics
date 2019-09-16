@@ -39,13 +39,6 @@ sap.ui.define([
 				fireMousePress(event.touches[0].clientX, event.touches[0].clientY);
 			});
 
-			const update = () => {
-				const updateCallback = this.getUpdateCallback();
-				if (updateCallback) {
-					updateCallback();
-				}
-			};
-
 			const init = (displays) => {
 				const container = document.createElement("div");
 				document.body.appendChild(container);
@@ -69,7 +62,29 @@ sap.ui.define([
 				scene.add(new THREE.AmbientLight(0xFFFFFF, 0.4));
 				camera.position.set(-3, 1, 1);
 
-				if (displays) {
+				const getCurrentCamera = () => {
+					if (renderer.vr) {
+						return renderer.vr.getCamera(camera);
+					}
+					return camera;
+				}
+
+				const update = () => {
+					const updateCallback = this.getUpdateCallback();
+					if (updateCallback) {
+						const currentCamera = getCurrentCamera();
+						updateCallback(currentCamera.position);
+					}
+				};
+
+				if (window.window.arSession) {
+					renderer.vr.enabled = true;
+					renderer.vr.setSession(window.window.arSession);
+					renderer.setAnimationLoop(function () {
+						renderer.render(scene, camera);
+						update();
+					});
+				} else if (displays) {
 					renderer.xr = new THREE.WebXRManager({}, displays, renderer, camera, scene, update);
 				} else {
 					// create OrbitControls
