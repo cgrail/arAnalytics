@@ -18,7 +18,7 @@ sap.ui.define([
 		onAfterRendering() {
 
 			this.arView = this.byId("arView");
-			this.arView.setUpdateCallback((() => this.updateCallback()));
+			this.arView.setUpdateCallback(((cameraPosition) => this.updateCallback(cameraPosition)));
 			this.arView.setSessionStartedCallback((() => this.onArSessionStarted()));
 			this.getView().setModel(this.viewModel);
 
@@ -103,11 +103,11 @@ sap.ui.define([
 			return textObj;
 		},
 
-		updateCallback() {
+		updateCallback(cameraPosition) {
 			if (!this.xAxisLabel) {
 				return;
 			}
-			this.xAxisLabel.lookAt(this.arView.getCamera().position);
+			this.xAxisLabel.lookAt(cameraPosition);
 			this.yAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
 			this.zAxisLabel.setRotationFromEuler(this.xAxisLabel.rotation);
 		},

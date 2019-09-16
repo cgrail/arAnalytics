@@ -32,10 +32,10 @@ sap.ui.define([
 				fireMousePress(event.touches[0].clientX, event.touches[0].clientY);
 			});
 
-			const update = () => {
+			const update = (cameraPosition) => {
 				const updateCallback = this.getUpdateCallback();
 				if (updateCallback) {
-					updateCallback();
+					updateCallback(cameraPosition);
 				}
 			};
 
@@ -59,7 +59,7 @@ sap.ui.define([
 				renderer.vr.setSession(session);
 				renderer.setAnimationLoop(function () {
 					renderer.render(scene, camera);
-					update();
+					update(renderer.vr.getCamera(camera).position);
 				});
 				container.appendChild(renderer.domElement);
 
