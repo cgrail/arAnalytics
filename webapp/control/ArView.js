@@ -8,22 +8,15 @@ sap.ui.define([
 			properties: {
 				"scene": "object",
 				"camera": "object",
-				"updateCallback": "function"
+				"updateCallback": "function",
+				"sessionStartedCallback": "function"
 			},
 			events: {
 				"press": {}
 			}
 		},
 
-		arViewInitialized: false,
-
-		onAfterRendering: function () {
-
-			if (this.arViewInitialized) {
-				return;
-			}
-			this.arViewInitialized = true;
-
+		startSession() {
 			var camera, scene;
 
 			const fireMousePress = (x, y) => {
@@ -46,13 +39,12 @@ sap.ui.define([
 				}
 			};
 
-			const init = (displays) => {
+			const init = (session) => {
 				const container = document.createElement("div");
 				document.body.appendChild(container);
 
 				scene = new THREE.Scene();
-				camera = displays ? new THREE.PerspectiveCamera() : new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1,
-					1000);
+				camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10);
 				const axesHelper = new THREE.AxesHelper(2);
 				scene.add(axesHelper);
 				scene.add(camera);
@@ -63,32 +55,60 @@ sap.ui.define([
 					antialias: true
 				});
 				renderer.setSize(window.innerWidth - 5, window.innerHeight - 30);
+				renderer.vr.enabled = true;
+				renderer.vr.setSession(session);
+				renderer.setAnimationLoop(function () {
+					renderer.render(scene, camera);
+					update();
+				});
 				container.appendChild(renderer.domElement);
 
 				camera.add(new THREE.PointLight(0xFFFFFF, 0.8));
 				scene.add(new THREE.AmbientLight(0xFFFFFF, 0.4));
 				camera.position.set(-3, 1, 1);
 
-				if (displays) {
-					renderer.xr = new THREE.WebXRManager({}, displays, renderer, camera, scene, update);
-				} else {
-					// create OrbitControls
-					const controls = new THREE.OrbitControls(camera, renderer.domElement);
-					controls.update();
-
-					function animate() {
-						requestAnimationFrame(animate);
-						update();
-						renderer.render(scene, camera);
-					}
-					animate();
+				const sessionStartedCallback = this.getSessionStartedCallback();
+				if (sessionStartedCallback) {
+					sessionStartedCallback();
 				}
+
+				// if (displays) {
+				// 	renderer.xr = new THREE.WebXRManager({}, displays, renderer, camera, scene, update);
+				// } else {
+				// 	// create OrbitControls
+				// 	const controls = new THREE.OrbitControls(camera, renderer.domElement);
+				// 	controls.update();
+
+				// 	function animate() {
+				// 		requestAnimationFrame(animate);
+				// 		update();
+				// 		renderer.render(scene, camera);
+				// 	}
+				// 	animate();
+				// }
 			};
-			if (THREE.WebXRUtils) {
-				THREE.WebXRUtils.getDisplays().then(init);
-			} else {
-				init();
+			// if (THREE.WebXRUtils) {
+			// 	THREE.WebXRUtils.getDisplays().then(init);
+			// } else {
+			// 	init();
+			// }
+
+			navigator.xr.requestSession('immersive-ar').then((session) => {
+				init(session);
+			});
+
+		},
+
+		arViewInitialized: false,
+
+		onAfterRendering: function () {
+
+			if (this.arViewInitialized) {
+				return;
 			}
+			this.arViewInitialized = true;
+
+
 		},
 
 		renderer: function (oRm, oControl) {

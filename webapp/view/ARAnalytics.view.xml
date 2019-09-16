@@ -8,8 +8,8 @@
 		backgroundDesign="Transparent" 
 		class="sapUiContentPadding overlay">
 		<content>
-			<control:ArView id="arView" 
-				press="onPress" />
+			<control:ArView id="arView" />
+
 
 			<List width="250px" 
 				visible="{/selectedCar/visible}" 
@@ -25,16 +25,7 @@
 		<footer>
 			<OverflowToolbar class="pointerauto sliderToolbar">
 				<ToolbarSpacer/>
-				<Text text="Time"/>
-				<Slider showAdvancedTooltip="true" 
-					width="80%" 
-					max="2" 
-					value="0" 
-					liveChange="onTimeSliderChange">
-					<customTooltips>
-						<control:SliderTooltip toolTips="{/metaData/timeSeries}"/>
-					</customTooltips>
-				</Slider>
+				<Button text="Start AR Session" press="startARSession" />
 				<ToolbarSpacer/>
 			</OverflowToolbar>
 		</footer>

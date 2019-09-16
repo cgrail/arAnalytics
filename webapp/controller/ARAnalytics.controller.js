@@ -19,8 +19,16 @@ sap.ui.define([
 
 			this.arView = this.byId("arView");
 			this.arView.setUpdateCallback((() => this.updateCallback()));
+			this.arView.setSessionStartedCallback((() => this.onArSessionStarted()));
 			this.getView().setModel(this.viewModel);
 
+		},
+
+		startARSession() {
+			this.arView.startSession();
+		},
+
+		onArSessionStarted() {
 			fetch("data/carData.json")
 				.then(result => result.json())
 				.then(carData => {
