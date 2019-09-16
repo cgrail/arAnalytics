@@ -35,7 +35,9 @@
 					viewName: "webxr-ui5.view.ARAnalytics"
 				}).placeAt("content");
 			}
-			if (navigator.xr && /(Android).+(Chrome\/7[6-9])/.test(navigator.userAgent)) {
+			const androidChromeRegex = /Android.+Chrome\/(\d+)/;
+			const minimalAndroidChromeVersion = 76;
+			if (navigator.xr && androidChromeRegex.test(navigator.userAgent) && androidChromeRegex.exec(navigator.userAgent)[1] >= minimalAndroidChromeVersion) {
 				handleAndroid();
 			} else if (/WebXRViewer/.test(navigator.userAgent)) {
 				handleIOS();
